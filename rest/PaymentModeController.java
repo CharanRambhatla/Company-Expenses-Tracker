@@ -51,12 +51,12 @@ public class PaymentModeController {
 
 	@DeleteMapping("/delete/{Code}")
 	public String deletePaymentMode(@PathVariable("Code") String Code) {
-		Optional<PaymentMode> optionalPaymentMode = paymrepo.findById(Code);
-		if (optionalPaymentMode.isPresent()) {
-			paymrepo.deleteById(Code);
-			return "PaymentMode deleted";
-		}
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "paymentmode not found");
+		PaymentMode pm = paymrepo.findAll().stream()
+				.filter(p -> p.getCode() != null && p.getCode().equals(Code))
+				.findFirst()
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "paymentmode not found"));
+		paymrepo.delete(pm);
+		return "PaymentMode deleted";
 	}
 
 }
